@@ -17,12 +17,23 @@ defmodule DayTwo do
   1165	1251	702	282	1178	834	211	1298	382	1339	67	914	1273	76	81	71
   6151	5857	4865	437	6210	237	37	410	544	214	233	6532	2114	207	5643	6852
   """
-  def solve() do
+  def solve_first_part() do
+    prepare_cells()
+    |> Enum.map(&difference_between_minimum_and_maximum_cell/1)
+    |> Enum.sum()
+  end
+
+  def solve_second_part() do
+    prepare_cells()
+    |> Enum.map(&even_division_result/1)
+    |> Enum.sum()
+  end
+
+  # Preparation of Table matrix from input
+  defp prepare_cells() do
     spreadsheet_rows()
     |> Enum.map(&split_cells/1)
     |> Enum.map(&cells_to_integer/1)
-    |> Enum.map(&difference_between_minimum_and_maximum_cell/1)
-    |> Enum.sum()
   end
 
   defp spreadsheet_rows() do
@@ -39,7 +50,24 @@ defmodule DayTwo do
     Enum.map(cells, &String.to_integer/1)
   end
 
+  # Part 1
   defp difference_between_minimum_and_maximum_cell(cells) do
     Enum.max(cells) - Enum.min(cells)
+  end
+
+  # Part 2
+  defp even_division_result(cells) do
+    cells
+    |> all_even_division_results
+    |> hd
+  end
+
+  defp all_even_division_results(cells) do
+    for first_number <- cells,
+        second_number <- cells,
+        first_number != second_number,
+        rem(first_number, second_number) == 0 do
+      div(first_number, second_number)
+    end
   end
 end
