@@ -15,4 +15,10 @@ defmodule DayfiveTest do
       assert(Dayfive.solve_first([0, 3, 0, 1, -3]) == 5)
     end
   end
+
+  describe "solve_second" do
+    test "example from description" do
+      assert(Dayfive.solve_second([0, 3, 0, 1, -3]) == 10)
+    end
+  end
 end
