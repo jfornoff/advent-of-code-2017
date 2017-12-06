@@ -1,14 +1,30 @@
 defmodule Daysix do
-  @input [14, 0, 15, 12, 11, 11, 3, 5, 1, 6, 8, 4, 9, 1, 8, 4]
-  def solve_part_one(allocation \\ @input) do
-    do_solve(allocation, 0, [])
+  defmodule Iteration do
+    defstruct [:allocation, :step_counter, :history]
   end
 
-  defp do_solve(allocation, step_counter, allocations_seen) do
-    if Enum.member?(allocations_seen, allocation) do
-      step_counter
+  @input [14, 0, 15, 12, 11, 11, 3, 5, 1, 6, 8, 4, 9, 1, 8, 4]
+  def solve_part_one(allocation \\ @input) do
+    do_solve(%Iteration{allocation: allocation, step_counter: 0, history: []}).step_counter
+  end
+
+  def solve_part_two(allocation \\ @input) do
+    result_iteration = do_solve(%Iteration{allocation: allocation, step_counter: 0, history: []})
+
+    Enum.find_index(result_iteration.history, fn history_allocation ->
+      history_allocation == result_iteration.allocation
+    end) + 1
+  end
+
+  defp do_solve(%Iteration{} = iteration) do
+    if Enum.member?(iteration.history, iteration.allocation) do
+      iteration
     else
-      do_solve(reallocate(allocation), step_counter + 1, [allocation | allocations_seen])
+      do_solve(%Iteration{
+        allocation: reallocate(iteration.allocation),
+        step_counter: iteration.step_counter + 1,
+        history: [iteration.allocation | iteration.history]
+      })
     end
   end
 

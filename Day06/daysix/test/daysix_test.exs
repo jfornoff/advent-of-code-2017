@@ -24,4 +24,15 @@ defmodule DaysixTest do
              ]) == 5
     end
   end
+
+  describe ".solve_part_two" do
+    test "example from description" do
+      assert Daysix.solve_part_two([
+               0,
+               2,
+               7,
+               0
+             ]) == 4
+    end
+  end
 end
