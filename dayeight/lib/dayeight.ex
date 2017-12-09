@@ -62,9 +62,15 @@ defmodule Dayeight do
   def solve_first_part(input_string \\ File.read!("#{__DIR__}/input.txt")) do
     input_string
     |> parse_instruction_list()
-    |> execute_instructions()
-    |> Map.values()
-    |> Enum.max()
+    |> execution_history()
+    |> latest_iteration_maximal_register_value()
+  end
+
+  def solve_second_part(input_string \\ File.read!("#{__DIR__}/input.txt")) do
+    input_string
+    |> parse_instruction_list()
+    |> execution_history()
+    |> all_time_maximal_register_value
   end
 
   defp parse_instruction_list(input_string) do
@@ -74,13 +80,30 @@ defmodule Dayeight do
     |> Enum.map(&Instruction.from_string/1)
   end
 
-  defp execute_instructions(instruction_list) do
+  defp execution_history(instruction_list) do
     instruction_list
-    |> Enum.reduce(%{}, fn instruction, registers ->
-         registers
-         |> Map.put_new(instruction.target_register, 0)
-         |> Map.put_new(instruction.condition_register, 0)
-         |> Instruction.execute(instruction)
+    |> Enum.reduce([%{}], fn instruction, [registers | _] = history ->
+         new_registers =
+           registers
+           |> Map.put_new(instruction.target_register, 0)
+           |> Map.put_new(instruction.condition_register, 0)
+           |> Instruction.execute(instruction)
+
+         [new_registers | history]
        end)
+  end
+
+  defp latest_iteration_maximal_register_value(execution_history) do
+    execution_history
+    |> hd()
+    |> Map.values()
+    |> Enum.max()
+  end
+
+  defp all_time_maximal_register_value(execution_history) do
+    execution_history
+    |> Enum.map(&Map.values/1)
+    |> List.flatten()
+    |> Enum.max()
   end
 end
