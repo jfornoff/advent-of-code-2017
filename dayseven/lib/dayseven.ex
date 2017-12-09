@@ -68,15 +68,15 @@ defmodule Dayseven do
     end
 
     @doc """
-    Replaces the node names in the "raw node"'s above nodes with its actual
-    node struct equivalient and builds their subtrees recursively
+    Replaces the node names in the "raw node"'s subtree field with its actual
+    node struct equivalent and builds their subtrees recursively
     """
     defp build_subtree_from_root(subtree_root, raw_nodes) do
       subtree_root
-      |> Map.update!(:subtree, fn above_node_names ->
-           above_node_names
-           |> Enum.map(fn above_node_name ->
-                above_node_name
+      |> Map.update!(:subtree, fn subtree_node_names ->
+           subtree_node_names
+           |> Enum.map(fn node_name ->
+                node_name
                 |> find_node_by_name(raw_nodes)
                 |> build_subtree_from_root(raw_nodes)
               end)
